@@ -652,7 +652,7 @@ document.getElementById('inp').addEventListener('keydown', e => {
 async function claude(key, system, userMsg, maxTokens=600, history=null) {
   const messages = history || [{role:'user', content:userMsg}];
 
-  const res = await fetch('/api/claude', {
+  const res = await fetch('/.netlify/functions/claude', {
     method: 'POST',
     headers: {'Content-Type':'application/json'},
     body: JSON.stringify({
