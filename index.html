@@ -464,7 +464,7 @@ Metered Utilities: Use MU when properties track utility consumption through mete
 Meter setup: To set up metered utilities, create utilities, create meter types, link properties, enter meter information, then enter readings by billing period. Water and sewer can share a source meter when applicable.
 High/Low settings: Consumption groups define ranges and can flag low/high/zero/negative consumption as exceptions. Exception reasons can warn before posting or require reasons on all exceptions before posting. Approval workflows define reviewers, conditional approvers, and final approvers.
 Meter exception approval: Reviewers add exception reasons and notes, approvers approve or reject, rejected exceptions return for follow-up, and readings can post after required approvals are complete.
-Meter estimates: Estimated readings can be generated from configured methods such as last posting, average prior postings, similar posting last year, or manual estimate, depending on system defaults.
+Meter estimates: The Estimate button on the Meter Readings page displays only when the Enable Meter Estimates option is checked in Meter Estimates system defaults. To check this, go to Menu → Services → Service Setup → Utilities → Meter Estimates and verify Enable meter estimates is checked. If enabled, estimated readings can be generated from configured methods such as last posting, average prior postings, similar posting last year, or manual estimate, depending on system defaults. If enabled and the button still does not show, the available documentation does not explain another cause and further investigation is needed.
 Meter swaps: Used to track meter replacements without manually managing two separate sets of readings and can link to service issues.
 STR / RV campground: STR properties use reservations instead of traditional leases. RV/Campground supports online booking, rate schedules, stay limits, payment policies, amenities, and marketing setup. Online booking must be licensed and enabled for eligible properties.
 Tenant payments: Payments can be entered as single payments against open charges or partial payments across multiple charges. ePay can be used when configured for the property.
@@ -636,6 +636,24 @@ I have:
 Ask anything.`);
 }
 
+function localKnowledgeAnswer(question) {
+  const q = (question || '').toLowerCase();
+  const asksEstimateMissing =
+    (q.includes('estimate') || q.includes('estimated')) &&
+    (q.includes('not showing') || q.includes('missing') || q.includes('not appear') || q.includes('button')) &&
+    (q.includes('meter reading') || q.includes('meter readings'));
+
+  if (asksEstimateMissing) {
+    return `The Estimate button on the Meter Readings page only displays when the Enable Meter Estimates option is checked in your Meter Estimates system defaults.
+
+To check this, go to Menu → Services → Service Setup → Utilities → Meter Estimates and verify that Enable meter estimates is checked. If it isn't, checking it will make the Estimate button appear on the Meter Readings page.
+
+If the option is already enabled and the button still isn't showing, that's not covered in the available documentation and would need further investigation.`;
+  }
+
+  return null;
+}
+
 function qa(q) { document.getElementById('inp').value = q; send(); }
 
 async function send() {
@@ -644,6 +662,8 @@ async function send() {
   const msg = inp.value.trim(); if (!msg) return;
   const key = document.getElementById('key').value.trim();
   inp.value = ''; addMsg('user', msg);
+  const localReply = localKnowledgeAnswer(msg);
+  if (localReply) { addMsg('ai', localReply); return; }
   if (!key) { addMsg('ai', 'Please enter your Anthropic API key at the top.'); return; }
   busy = true; document.getElementById('sbtn').disabled = true; showTyping();
   hist.push({role:'user', content:msg});
