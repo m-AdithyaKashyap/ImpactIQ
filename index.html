@@ -657,7 +657,7 @@ async function claude(key, system, userMsg, maxTokens=600, history=null) {
     headers: {'Content-Type':'application/json'},
     body: JSON.stringify({
       apiKey: key,
-      model: 'claude-3-5-haiku-20241022',
+      model: 'claude-haiku-4-5',
       max_tokens: maxTokens,
       system,
       messages
